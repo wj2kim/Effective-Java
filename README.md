@@ -281,3 +281,11 @@ Object.equals를 재정의 하는 것이 바람직 할 때는 언제?
 객체 동일설 ( Obejct equality) 이 아닌 논리적 동일성 (logical equality)의 개념을 지원하는 클래스일 때, 그리고 상위 클래스의 equals가 하위 클래스의 필요를 충족하지 못할 때 재정의 한다. 값 클래스 (value class)는 대체로 그 조건에 부합한다. 
 
 열거 자료형 (enum)같은 클래스는 개체 통제 기능을 사용해 값마다 최대 하나의 객체만 존재하도록 제한했다. 이런 클래스는 equals 메소드를 재정의 할 필요가 없다.
+
+# 2. equals를 재정의할 때는 반드시 hashCode도 재정의하라
+
+만약 equals를 재정의 하고 hashCode를 재정의 하지 않으면 Object.hashCode의 일반 규약을 어기게 되므로 , HashMap, HashSet, Hashtable 같은 해쉬( hash ) 기반 컬렉션과 함께 사용하면 오작동 하게 된다. 
+
+equals 매소드가 논리적으로 같다고 판단한 두 객체라 해도 Object hashCode 입장에서 보면 그다지 공통점이 없는 두 객체일 뿐인다. 따라서 Object의 hashCode 메소드는 규약대로 같은 정수를 반환하는 대신, 무작위로 선택된 것 처럼 보이는 두개의 정수를 반환한다. 
+
+예를 들어, 아래의 간단한 PhoneNumber 클래스를 보면 equals 메소드는 구현 되어 있다.
