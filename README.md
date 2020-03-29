@@ -300,3 +300,26 @@ toString을 잘 만들어 놓으면 클래스를 좀 더 쾌적하게 사용할 
 toString 메소드를 재정의하면 해당 객체만 해택을 보는 것이 아니라 해당 객체에 대한 참조를 유지하는 객체들, 특히 컬렉션 까지 해택을 본다. 
 
 가능하다면 toString 메소드는 객체 내의 중요 정보를 전부 담아 반환해야한다.
+
+# 4. clone을 재정의할 때는 신중하라
+
+Cloneable은 어떤 객체가 복제(clone)을 허용한다는 사실을 알리는 데 쓰려고 고안된 믹스인(mixin) 인터페이스다. Cloneable 인터페이스에 아무런 메소드도 없다면 대체 Cloneable이 하는 일은 무엇인가? protected로 선언된 Object의 clone 메소드가 어떻게 동작할지 정한다. Cloneable을 구현하지 않은 클래스라면 clone 메소드는 CloneNotSupportedException을 던진다. clone 메소드의 일반 규약은 느슨하다. 
+
+java.lang.Object 명세를 보면 다음과 같이 되어 있다. 
+
+- 객체의 복사본을 만들어서 반환한다. "복사"의 정확한 의미는 클래스마다 다르다. 일반적으로는 다음의 조건이 충족되어야 한다. 객체 x가 있다고 하자.  x.clone() ! = x ( 이 조건은 참이어야 한다. )
+- x.clone().getClass() == x.getClass() 이 조건은 참이 되겠지만, 반드시 그래야 하는것은 아니다.
+- x.clone().equals(x) 이 코드를 실행한 결과도 true 가 되겠지만, 반드시 그래야 하는 것은 아니다. 객체를 복사하면 보통 같은 클래스의 새로운 객체가 만들어지는데, 내부 자료 구조까지 복사해야 될 수 도 있다. 어떤 생성자도 호출 되지 않는다.
+
+비-final 클래스에 clone을 재정의할 때는 반드시 super.clone을 호출해 얻은 객체를 반환해야 한다. 어떤 클래스의 모든 상위 클래스가 이 규칙을 따른다면 super.clone은 최종적으로 Object의 clone 메소드를 호출하게 될 것이고, 원하는 클래스의 객체가 만들어 질 것이다. 
+
+    @Override
+    public PhoneNumber clone(){
+    	try {
+    		return (PhoneNumber) super.clone();
+    	}	catch ( CloneNotSupportedException e ) {
+    		throw new AssertionError(); // 수행 될 일은 없음. 
+    	}
+    }
+
+이 clone  메소드는 Object 가 아니라  PhoneNumber를 반환한다.
