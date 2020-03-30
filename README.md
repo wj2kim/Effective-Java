@@ -323,3 +323,9 @@ java.lang.Object 명세를 보면 다음과 같이 되어 있다.
     }
 
 이 clone  메소드는 Object 가 아니라  PhoneNumber를 반환한다.
+
+# 5. Comparable 구현을 고려하라
+
+compareTo 메소드는 Object 에 선언되어 있지 않다. 이 메소드는 Comparable 인터페이스에 포함된 유일한 메소드다. Object의 equals 메소드와 특성은 비슷하지만, 단순한 동치성 검사 이외에 순서 비교가 가능하며, 좀 더 일반적이다. Comparable을 구현한 객체들의 배열을 정렬하는 것은 아래의 예제처럼 간단하다. 
+
+Arrays.sort (a);
